@@ -1,5 +1,6 @@
 ﻿using Labyrinth.Build;
 using Labyrinth.Crawl;
+using Labyrinth.Events;
 using Labyrinth.Tiles;
 using System.Text;
 
@@ -15,7 +16,7 @@ namespace Labyrinth
         /// <exception cref="NotSupportedException">Thrown for multiple doors (resp. key locations) before key locations (resp. doors).</exception>
         public Labyrinth(IBuilder builder)
         {
-            _tiles = builder.Build(out _startPosition);
+            (_tiles, _startPosition) = Build(builder);
             if (_tiles.GetLength(0) < 3 || _tiles.GetLength(1) < 3)
             {
                 throw new ArgumentException("Labyrinth must be at least 3x3");
@@ -26,6 +27,22 @@ namespace Labyrinth
             }
             Width = _tiles.GetLength(0);
             Height = _tiles.GetLength(1);
+        }
+
+        private static (Tile[,] Tiles, (int, int) StartPosition) Build(IBuilder builder)
+        {
+            var startPosition = IBuilder.InvalidPosition;
+            EventHandler<StartEventArgs> startPositionHandler =
+                (_, args) => startPosition = (args.X, args.Y);
+            builder.StartPositionFound += startPositionHandler;
+            try
+            {
+                return (builder.Build(), startPosition);
+            }
+            finally
+            {
+                builder.StartPositionFound -= startPositionHandler;
+            }
         }
 
         /// <summary>

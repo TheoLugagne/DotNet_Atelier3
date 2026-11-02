@@ -1,4 +1,5 @@
-﻿using Labyrinth.Items;
+﻿using Labyrinth.Events;
+using Labyrinth.Items;
 using Labyrinth.Tiles;
 
 namespace Labyrinth.Build
@@ -7,6 +8,8 @@ namespace Labyrinth.Build
     {
         static readonly (int, int) InvalidPosition = (-1, -1);
 
-        Tile[,] Build(out (int, int) startPosition);
+        event EventHandler<StartEventArgs>? StartPositionFound;
+
+        Tile[,] Build();
     }
 }

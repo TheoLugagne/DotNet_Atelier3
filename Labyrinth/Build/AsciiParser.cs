@@ -1,4 +1,5 @@
-﻿using Labyrinth.Items;
+﻿using Labyrinth.Events;
+using Labyrinth.Items;
 using Labyrinth.Tiles;
 
 namespace Labyrinth.Build
@@ -9,15 +10,15 @@ namespace Labyrinth.Build
     /// <param name="ascii_map">A multiline string with '+', '-' or '|' for walls, '/' for doors, 'k' for key locations and x for starting position.</param>
     public class AsciiParser(string ascii_map) : IBuilder
     {
-        public Tile[,] Build(out (int, int) startPosition)
+        public event EventHandler<StartEventArgs>? StartPositionFound;
+
+        public Tile[,] Build()
         {
             var lines = ascii_map.Split("\n,\r\n".Split(','), StringSplitOptions.None);
             var width = lines[0].Length;
             var tiles = new Tile[width, lines.Length];
-
             using var km = new Keymaster();
 
-            startPosition = IBuilder.InvalidPosition;
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 if (lines[y].Length != width)
@@ -28,7 +29,7 @@ namespace Labyrinth.Build
                 {
                     tiles[x, y] = lines[y][x] switch
                     {
-                        'x' => NewStartPos(x, y, out startPosition),
+                        'x' => NewStartPos(x, y),
                         ' ' => new Room(),
                         '+' or '-' or '|' => Wall.Singleton,
                         '/' => km.NewDoor(),
@@ -40,9 +41,9 @@ namespace Labyrinth.Build
             return tiles;
         }
 
-        private Room NewStartPos(int x, int y, out (int, int) startPosition)
+        private Room NewStartPos(int x, int y)
         {
-            startPosition = (x, y);
+            StartPositionFound?.Invoke(this, new StartEventArgs(x, y));
             return new Room();
         }
     }
