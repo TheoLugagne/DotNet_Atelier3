@@ -33,5 +33,20 @@ namespace Labyrinth.Crawl
         /// </summary>
         /// <returns>An inventory of the collectable items in the place reached.</returns>
         Inventory Walk();
+
+        /// <summary>
+        /// Turn 90 degrees to the left.
+        /// </summary>
+        void TurnLeft();
+
+        /// <summary>
+        /// Turn 90 degrees to the right.
+        /// </summary>
+        void TurnRight();
+
+        /// <summary>
+        /// Turn 180 degrees.
+        /// </summary>
+        void TurnAround();
     }
 }
