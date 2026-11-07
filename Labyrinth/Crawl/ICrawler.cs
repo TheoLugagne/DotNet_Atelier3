@@ -1,5 +1,6 @@
 ﻿using Labyrinth.Items;
 using Labyrinth.Tiles;
+using Labyrinth.Events;
 
 namespace Labyrinth.Crawl
 {
@@ -8,6 +9,16 @@ namespace Labyrinth.Crawl
     /// </summary>
     public interface ICrawler
     {
+        /// <summary>
+        /// Raised after the crawler moves to a new position.
+        /// </summary>
+        event EventHandler<CrawlingEventArgs>? PositionChanged;
+
+        /// <summary>
+        /// Raised after the crawler changes direction.
+        /// </summary>
+        event EventHandler<CrawlingEventArgs>? DirectionChanged;
+
         /// <summary>
         /// Gets the current X position.
         /// </summary>

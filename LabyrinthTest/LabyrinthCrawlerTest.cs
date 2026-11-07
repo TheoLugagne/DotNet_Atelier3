@@ -214,7 +214,7 @@ public class LabyrinthCrawlerTest
         
         var test = laby.NewCrawler();
         var inventory = test.Walk();
-        ((Crawler)test).pickUp(inventory);
+        ((Crawler)test).PickUp(inventory);
         
         using var all = Assert.EnterMultipleScope();
         Assert.That(((Crawler)test).Inventory.HasItem, Is.True);
@@ -235,7 +235,7 @@ public class LabyrinthCrawlerTest
         var test = laby.NewCrawler();
         
         ((Crawler)test).TurnRight();
-        ((Crawler)test).pickUp(test.Walk());
+        ((Crawler)test).PickUp(test.Walk());
         
         ((Crawler)test).TurnLeft();
         ((Door)test.FacingTile).Open(((Crawler)test).Inventory);

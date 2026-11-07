@@ -1,5 +1,6 @@
 using Labyrinth.Items;
 using Labyrinth.Tiles;
+using Labyrinth.Events;
 
 namespace Labyrinth.Crawl
 {
@@ -16,6 +17,10 @@ namespace Labyrinth.Crawl
         public Direction Direction {get; set; } = Direction.North;
 
         public Tile FacingTile { get; set; } = facingTile;
+
+        public event EventHandler<CrawlingEventArgs>? PositionChanged;
+
+        public event EventHandler<CrawlingEventArgs>? DirectionChanged;
         
         public MyInventory Inventory { get; } = new MyInventory();
 
@@ -24,6 +29,7 @@ namespace Labyrinth.Crawl
             var inventory = FacingTile.Pass();
             (X, Y) = GetFacingTileCoordinates();
             UpdateFacingTile();
+            PositionChanged?.Invoke(this, new CrawlingEventArgs(X, Y, Direction));
             return inventory;
         }
         
@@ -31,12 +37,14 @@ namespace Labyrinth.Crawl
         {
             Direction.TurnLeft();
             UpdateFacingTile();
+            DirectionChanged?.Invoke(this, new CrawlingEventArgs(X, Y, Direction));
         }
 
         public void TurnRight()
         {
             Direction.TurnRight();
             UpdateFacingTile();
+            DirectionChanged?.Invoke(this, new CrawlingEventArgs(X, Y, Direction));
         }
         
         public void TurnAround()
@@ -44,6 +52,7 @@ namespace Labyrinth.Crawl
             Direction.TurnRight();
             Direction.TurnRight();
             UpdateFacingTile();
+            DirectionChanged?.Invoke(this, new CrawlingEventArgs(X, Y, Direction));
         }
         
         private void UpdateFacingTile()
@@ -54,7 +63,7 @@ namespace Labyrinth.Crawl
         
         private (int, int) GetFacingTileCoordinates() => (X + Direction.DeltaX, Y + Direction.DeltaY);
         
-        public void pickUp(Inventory inventory)
+        public void PickUp(Inventory inventory)
         {
             Inventory.MoveItemFrom(inventory);
         }
